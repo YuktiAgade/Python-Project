@@ -1,0 +1,63 @@
+import tkinter as tk
+import time
+
+# number of disks
+n = 4
+
+# stacks representing rods
+A = list(range(n, 0, -1))
+B = []
+C = []
+
+moves = []
+
+def tower_of_hanoi(n, source, auxiliary, destination):
+    if n == 1:
+        moves.append((source, destination))
+        return
+    tower_of_hanoi(n-1, source, destination, auxiliary)
+    moves.append((source, destination))
+    tower_of_hanoi(n-1, auxiliary, source, destination)
+
+tower_of_hanoi(n, 'A', 'B', 'C')
+
+# GUI
+window = tk.Tk()
+window.title("Tower of Hanoi Simulator")
+
+canvas = tk.Canvas(window, width=600, height=300)
+canvas.pack()
+
+rod_positions = {'A':150,'B':300,'C':450}
+stacks = {'A':A,'B':B,'C':C}
+
+def draw():
+    canvas.delete("all")
+
+    # draw rods
+    for x in rod_positions.values():
+        canvas.create_rectangle(x-5,100,x+5,250,fill="black")
+
+    # draw disks
+    for rod in stacks:
+        stack = stacks[rod]
+        for i,disk in enumerate(stack):
+            width = disk*20
+            x = rod_positions[rod]
+            y = 240 - i*15
+            canvas.create_rectangle(x-width,y,x+width,y+10,fill="blue")
+
+    window.update()
+
+def move_disk(src,dest):
+    disk = stacks[src].pop()
+    stacks[dest].append(disk)
+
+for move in moves:
+    draw()
+    time.sleep(0.8)
+    move_disk(move[0],move[1])
+
+draw()
+
+window.mainloop()
